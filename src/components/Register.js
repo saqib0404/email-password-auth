@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link } from 'react-router-dom';
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import app from '../firebase/firebase.init'
 
 const auth = getAuth(app);
@@ -15,7 +15,8 @@ const Register = () => {
         event.preventDefault()
         const email = event.target.email.value;
         const password = event.target.password.value;
-        // console.log(email, password);
+        const name = event.target.name.value;
+        console.log(name, password);
         setSuccess(false)
 
         if (!/(?=.*[0-9])/.test(password)) {
@@ -35,14 +36,23 @@ const Register = () => {
             .then(result => {
                 console.log(result.user)
                 setSuccess(true)
-                event.target.reset()
                 verifyAccount()
+                updateUserName(name)
+                event.target.reset()
             })
             .catch(err => {
                 console.error('error: ', err)
                 setErrorPassword(err.message)
             })
+        const updateUserName = (name) => {
+            updateProfile(auth.currentUser, {
+                displayName: name
+            })
+                .then(() => console.log('userNAme updated'))
+                .catch(err => console.log('error: ', err))
+        }
     }
+
 
     const verifyAccount = () => {
         sendEmailVerification(auth.currentUser)
@@ -55,10 +65,10 @@ const Register = () => {
         <div>
             <Form onSubmit={handleResiter} className='w-50 mx-auto'>
                 <h2 className='text-primary'>Registration Form</h2>
-                {/* <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Group className="mb-3" controlId="formBasicName">
                     <Form.Label>Name</Form.Label>
-                    <Form.Control name="name" type="email" placeholder="Enter your name" />
-                </Form.Group> */}
+                    <Form.Control name="name" type="text" placeholder="Enter your name" />
+                </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Email address</Form.Label>
