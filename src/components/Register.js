@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link } from 'react-router-dom';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import app from '../firebase/firebase.init'
 
 const auth = getAuth(app);
@@ -36,11 +36,19 @@ const Register = () => {
                 console.log(result.user)
                 setSuccess(true)
                 event.target.reset()
+                verifyAccount()
             })
             .catch(err => {
                 console.error('error: ', err)
                 setErrorPassword(err.message)
             })
+    }
+
+    const verifyAccount = () => {
+        sendEmailVerification(auth.currentUser)
+            .then(() => {
+                alert('Check your email and verify!!')
+            });
     }
 
     return (
