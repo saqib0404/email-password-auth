@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link } from 'react-router-dom';
 
-const login = () => {
+const Login = () => {
     return (
         <div>
             <Form className='w-50 mx-auto'>
@@ -26,4 +26,4 @@ const login = () => {
     );
 };
 
-export default login;
+export default Login;
