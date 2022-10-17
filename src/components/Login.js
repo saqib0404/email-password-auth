@@ -1,4 +1,4 @@
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -11,6 +11,7 @@ const Login = () => {
 
     const [success, setSuccess] = useState(false)
     const [wrongPassword, setWrongPassword] = useState('')
+    const [emailAddress, setEmailAddress] = useState('')
 
     const handleLogIn = event => {
         event.preventDefault()
@@ -29,13 +30,30 @@ const Login = () => {
                 setWrongPassword(err.message)
             })
     }
+
+    const getEmailOnBlur = event => {
+        setEmailAddress(event.target.value)
+    }
+
+    const handleResetPassword = () => {
+        sendPasswordResetEmail(auth, emailAddress)
+            .then(() => {
+                setWrongPassword('')
+                alert('Password reset emai sent. Please check your email')
+            })
+            .catch(err => {
+                console.log('error: ', err);
+                setWrongPassword(err.message)
+            })
+    }
+
     return (
         <div>
             <Form onSubmit={handleLogIn} className='w-50 mx-auto'>
                 <h2 className='text-primary'>Login Form</h2>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control name="email" type="email" placeholder="Enter email" required />
+                    <Form.Label >Email address</Form.Label>
+                    <Form.Control onBlur={getEmailOnBlur} name="email" type="email" placeholder="Enter email" required />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -48,6 +66,7 @@ const Login = () => {
                 </Button>
                 <p className='my-4'>To Create an account, please <Link to='/register'>Register</Link></p>
                 {success && <p className='text-success'>Account Logged in.</p>}
+                <p>Forget Password?<button onClick={handleResetPassword} type="button" className="btn btn-link">Reset</button></p>
             </Form>
         </div>
     );
